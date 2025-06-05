@@ -1,0 +1,141 @@
+#
+# wm independent hotkeys
+#
+
+# terminal emulator
+super + Return
+	kitty
+super + shift + Return
+  kitty --class FloaTerm
+
+#ranger
+super + shift + f 
+  kitty --class FloaTerm -e ranger ~/Desktop
+
+# program launcher
+super + shift + m
+	rofi -show drun
+
+#volume
+super + F7
+  pamixer -d 5
+
+super + F8
+  pamixer -i 5
+
+super + F6
+  pamixer -t
+
+#Brightness
+super + F2
+   sh $HOME/.config/bspwm/scripts/Brightness down
+
+super + F3
+   sh $HOME/.config/bspwm/scripts/Brightness up
+
+# Screenshot Now
+Print
+    $HOME/.config/bspwm/scripts/ScreenShoter --now
+
+# Screenshot Select
+ctrl + Print
+	  $HOME/.config/bspwm/scripts/ScreenShoter --sel
+
+# Screenshot in 10s
+alt + Print
+	  $HOME/.config/bspwm/scripts/ScreenShoter --in10
+
+# Screenshot active window
+shift + Print
+    $HOME/.config/bspwm/scripts/ScreenShoter --active
+
+
+# alternate between the tiled and monocle layout
+super + m
+	bspc desktop -l next
+
+# Power off, Reboot, Log out, Lockscreen, kill an app
+ctrl + super + alt + {p,r,l}
+	{systemctl poweroff, systemctl reboot, betterlockscreen -l dim}
+
+# ----- BSPWM ----- #
+#####################
+
+# quit/restart bspwm
+super + shift + {q,r}
+	bspc {quit,wm -r}
+
+# close and kill
+super + {_,shift + }c
+	bspc node -{c,k}
+
+# make sxhkd reload its configuration files:
+super + Escape
+	pkill -USR1 -x sxhkd
+
+# ----- Node states and flags ----- #
+
+# Set the node state
+alt + {t,shift + t,a,f}
+	bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
+
+# Set the node flags
+alt + {m,x,s,p}
+	bspc node -g {marked,locked,sticky,private}
+
+# Hide/Unhide node
+alt + h
+	sh -c 'NHidden=$(bspc query -N -n .hidden -d focused); \
+	if [ -z "$NHidden" ]; then bspc node focused -g hidden=on; \
+	else bspc node "$NHidden" -g hidden=off; fi'
+
+# ----- Focus/Swap Nodes ----- #
+
+# Rotate desktop
+super + alt + r
+	bspc node @/ --rotate {90,-90}
+
+# Switch workspace
+super + {Left,Right}
+	bspc desktop -f {prev,next}
+
+# Focus or send to the given desktop
+super + {_,shift + }{1-9,0}
+	bspc {desktop -f,node -d} '^{1-9,10}'
+
+# Send focused Node to workspace directionally
+super + ctrl + {Left,Right}
+	bspc node -d {prev,next} '--follow'
+
+# Cycle focus through nodes.
+super + Tab
+	bspc node -f next.local.!hidden.window
+
+# Swap Nodes
+ctrl + shift + {Left,Down,Up,Right}
+	bspc node -s {west,south,north,east}.local
+
+# Focus the last node/desktop
+ctrl + shift {comma,period}
+	bspc {node,desktop} -f last
+
+# Preselect the direction (horizontal, vertical or cancel)
+super + ctrl {h,v,q}
+	bspc node -p {east,south,cancel}
+
+# ----- Expand/Shrink Nodes ----- #
+
+# Expand node
+super + alt {Left,Down,Up,Right}
+	bspc node -z {left -20 0,bottom 0 20,top 0 -20,right 20 0}
+
+# Shrink node
+super + shift {Left,Down,Up,Right}
+	bspc node -z {right -20 0,top 0 20,bottom 0 -20,left 20 0}
+
+# Move floating window
+alt + shift {Left,Down,Up,Right}
+	bspc node -v {-20 0,0 20,0 -20,20 0}
+
+#ctrl
+#  bspc pointer -g move
